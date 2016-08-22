@@ -1,0 +1,6 @@
+commit-sha-1: 68425dc2c0069d2d9aafb9c4177f0b6048472aae
+commit-short: 68425dc
+branch: HEAD
+remote: https://github.com/openstack/charm-neutron-openvswitch
+info-generated: Thu Jul 28 19:05:57 UTC 2016
+note: This file should exist only in a built or published charm artifact (not in the charm source code tree).
