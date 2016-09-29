@@ -23,6 +23,9 @@ from charmhelpers.core.hookenv import (
     related_units,
     unit_get,
     network_get_primary_address,
+    log,
+    INFO,
+    ERROR,
 )
 from charmhelpers.contrib.openstack.utils import (
     configure_installation_source,
@@ -98,7 +101,13 @@ class LBPluginContext(context.NeutronContext):
                 lb_ctxt['local_ip'] = fallback
 
         neutron_api_settings = NeutronAPIContext()()
-        lb_ctxt['interface_mappings'] = conf['interface-mappings']
+
+        portmaps = context.DataPortContext()()
+        if not portmaps:
+            log("There are no data-ports defined for this host.", level=ERROR)
+        log("Portmaps e: %s" % str(portmaps), level=INFO)
+        lb_ctxt['interface_mappings'] = "physnet1:%s" % portmaps.keys()[0] 
+        #lb_ctxt['interface_mappings'] = conf['interface-mappings']
         lb_ctxt['neutron_security_groups'] = self.neutron_security_groups
         lb_ctxt['l2_population'] = neutron_api_settings['l2_population']
         lb_ctxt['overlay_network_type'] = \

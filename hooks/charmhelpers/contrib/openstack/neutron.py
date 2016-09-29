@@ -375,6 +375,15 @@ def parse_data_port_mappings(mappings, default_bridge='br-data'):
         # config.
         _mappings = {mappings.split()[0]: default_bridge}
 
+
+    # abacos: fix for MAC only data-port definition
+    for p, b in _mappings.iteritems():
+        log("len de %s este %s" % (p, len(p)), level=ERROR)
+
+        if len(b) < 3:
+            _mappings[('%s:%s' % (b, p))] = default_bridge
+            del _mappings[p]
+    log("AICI mappings e: %s" % str(_mappings), level=ERROR)
     ports = _mappings.keys()
     if len(set(ports)) != len(ports):
         raise Exception("It is not allowed to have the same port configured "

@@ -988,16 +988,21 @@ class NeutronPortContext(OSContextGenerator):
             addresses = get_ipv4_addr(nic, fatal=False)
             addresses += get_ipv6_addr(iface=nic, fatal=False)
             hwaddr_to_ip[hwaddr] = addresses
-
+        log("hwaddr_to_nic: %s" % str(hwaddr_to_nic), level=DEBUG)
+        log("hwaddr_to_ip: %s" % str(hwaddr_to_ip), level=DEBUG)
         resolved = []
         mac_regex = re.compile(r'([0-9A-F]{2}[:-]){5}([0-9A-F]{2})', re.I)
         for entry in ports:
+            log("Resolving %s" % (entry), level=DEBUG)
             if re.match(mac_regex, entry):
+                log("1")
                 # NIC is in known NICs and does NOT hace an IP address
                 if entry in hwaddr_to_nic and not hwaddr_to_ip[entry]:
+                    log("2")
                     # If the nic is part of a bridge then don't use it
-                    if is_bridge_member(hwaddr_to_nic[entry]):
-                        continue
+                    #if is_bridge_member(hwaddr_to_nic[entry]):
+                    #    log("3")
+                    #    continue
 
                     # Entry is a MAC address for a valid interface that doesn't
                     # have an IP address assigned yet.
@@ -1346,10 +1351,15 @@ class DataPortContext(NeutronPortContext):
         if ports:
             # Map of {port/mac:bridge}
             portmap = parse_data_port_mappings(ports)
+            log("DataPortContext: mappings: %s" % str(portmap))
             ports = portmap.keys()
+            log("DataPortContext: ports: %s" % str(ports))
+
             # Resolve provided ports or mac addresses and filter out those
             # already attached to a bridge.
             resolved = self.resolve_ports(ports)
+            log("DataPortContext: resolved: %s" % str(resolved))
+
             # FIXME: is this necessary?
             normalized = {get_nic_hwaddr(port): port for port in resolved
                           if port not in ports}
