@@ -36,6 +36,7 @@ def add_lxbridge(name, datapath_type=None):
 def del_lxbridge(name):
     ''' Delete the named bridge from linuxbridge '''
     log('Deleting bridge {}'.format(name))
+    subprocess.check_call(["ip", "link", "set", name, "down"])
     subprocess.check_call(["brctl", "--", "delbr", name])
 
 
@@ -54,7 +55,7 @@ def add_lxbridge_port(name, port, promisc=False):
 def del_lxbridge_port(name, port):
     ''' Delete a port from the named linuxbridge bridge '''
     log('Deleting port {} from bridge {}'.format(port, name))
-    subprocess.check_call(["ovs-vsctl", "--", "delif",
+    subprocess.check_call(["brctl", "--", "delif",
                            name, port])
-    subprocess.check_call(["ip", "link", "set", port, "down"])
-    subprocess.check_call(["ip", "link", "set", port, "promisc", "off"])
+    #subprocess.check_call(["ip", "link", "set", port, "down"])
+    #subprocess.check_call(["ip", "link", "set", port, "promisc", "off"])

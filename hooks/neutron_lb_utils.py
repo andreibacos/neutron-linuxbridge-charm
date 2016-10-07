@@ -44,7 +44,9 @@ from charmhelpers.contrib.openstack.utils import (
 import neutron_lb_context
 from charmhelpers.contrib.network.linuxbridge import (
     add_lxbridge,
+    del_lxbridge,
     add_lxbridge_port,
+    del_lxbridge_port,
 )
 from charmhelpers.core.hookenv import (
     charm_dir,
@@ -352,7 +354,15 @@ def configure_lb():
     #if ext_port_ctx and ext_port_ctx['ext_port']:
     #    add_lxbridge_port(EXT_BRIDGE, ext_port_ctx['ext_port'])
 
-    #portmaps = DataPortContext()()
+    portmaps = DataPortContext()()
+    data_port = portmaps.keys()[0]
+    # Remove juju 2.0 created bridge for the data port
+    # Just try catch it because we don't want it to fail on next config-changed hooks
+    try:
+        del_lxbridge_port("br-%s" % data_port, data_port)
+        del_lxbridge("br-%s" % data_port)
+    except:
+        pass
     #bridgemaps = parse_bridge_mappings(config('bridge-mappings'))
     #for br in bridgemaps.itervalues():
      #   add_lxbridge(br, datapath_type)
