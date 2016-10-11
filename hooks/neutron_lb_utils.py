@@ -352,11 +352,18 @@ def configure_lb():
 
     portmaps = DataPortContext()()
     data_port = portmaps.keys()[0]
-    # Remove juju 2.0 created bridge for the data port
-    # Just try catch it because we don't want it to fail on next config-changed hooks
     try:
+        # Remove juju 2.0 created bridge for the data port
+        # Just try catch it because we don't want it to fail on next config-changed hooks
         del_lxbridge_port("br-%s" % data_port, data_port)
         del_lxbridge("br-%s" % data_port)
+    except:
+        pass
+
+    try:
+        # Remove libvirt default network (this kills the dnsmasq process too)
+        subprocess.check_call(["virsh", "net-destroy", "default"])
+        subprocess.check_call(["virsh", "net-undefine", "default"])
     except:
         pass
     service_restart('os-charm-phy-nic-mtu')
