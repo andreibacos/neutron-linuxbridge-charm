@@ -988,22 +988,13 @@ class NeutronPortContext(OSContextGenerator):
             addresses = get_ipv4_addr(nic, fatal=False)
             addresses += get_ipv6_addr(iface=nic, fatal=False)
             hwaddr_to_ip[hwaddr] = addresses
-        log("hwaddr_to_nic: %s" % str(hwaddr_to_nic), level=DEBUG)
-        log("hwaddr_to_ip: %s" % str(hwaddr_to_ip), level=DEBUG)
         resolved = []
         mac_regex = re.compile(r'([0-9A-F]{2}[:-]){5}([0-9A-F]{2})', re.I)
         for entry in ports:
             log("Resolving %s" % (entry), level=DEBUG)
             if re.match(mac_regex, entry):
-                log("1")
                 # NIC is in known NICs and does NOT hace an IP address
                 if entry in hwaddr_to_nic and not hwaddr_to_ip[entry]:
-                    log("2")
-                    # If the nic is part of a bridge then don't use it
-                    #if is_bridge_member(hwaddr_to_nic[entry]):
-                    #    log("3")
-                    #    continue
-
                     # Entry is a MAC address for a valid interface that doesn't
                     # have an IP address assigned yet.
                     resolved.append(hwaddr_to_nic[entry])

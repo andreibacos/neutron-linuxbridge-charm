@@ -105,7 +105,6 @@ class LBPluginContext(context.NeutronContext):
         portmaps = context.DataPortContext()()
         if not portmaps:
             log("There are no data-ports defined for this host.", level=ERROR)
-        log("Portmaps e: %s" % str(portmaps), level=INFO)
         lb_ctxt['interface_mappings'] = "physnet1:%s" % portmaps.keys()[0] 
         #lb_ctxt['interface_mappings'] = conf['interface-mappings']
         lb_ctxt['neutron_security_groups'] = self.neutron_security_groups

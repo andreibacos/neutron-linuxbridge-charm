@@ -104,7 +104,7 @@ LB_PKGS = [
         'python-oslo.config',  # Force upgrade
 #        "nova-api-metadata",
         "neutron-metering-agent",
-        "neutron-lbaas-agent",
+#        "neutron-lbaas-agent",
 ]
     
 BASE_GIT_PACKAGES = [
@@ -348,11 +348,7 @@ def determine_ports():
 def configure_lb():
     status_set('maintenance', 'Configuring linuxbridge')
     datapath_type = determine_datapath_type()
-    #add_lxbridge(INT_BRIDGE, datapath_type)
-    #add_lxbridge(EXT_BRIDGE, datapath_type)
     ext_port_ctx = None
-    #if ext_port_ctx and ext_port_ctx['ext_port']:
-    #    add_lxbridge_port(EXT_BRIDGE, ext_port_ctx['ext_port'])
 
     portmaps = DataPortContext()()
     data_port = portmaps.keys()[0]
@@ -363,20 +359,6 @@ def configure_lb():
         del_lxbridge("br-%s" % data_port)
     except:
         pass
-    #bridgemaps = parse_bridge_mappings(config('bridge-mappings'))
-    #for br in bridgemaps.itervalues():
-     #   add_lxbridge(br, datapath_type)
-      #  if not portmaps:
-       #     continue
-#
- #       for port, _br in portmaps.iteritems():
-  #          if _br == br:
-   #             add_lxbridge_port(br, port, promisc=True)
-
-    # Ensure this runs so that mtu is applied to data-port interfaces if
-    # provided.
-    # NOTE(ajkavanagh) for pause/resume we don't gate this as it's not a
-    # running service, but rather running a few commands.
     service_restart('os-charm-phy-nic-mtu')
 
 
